@@ -1,0 +1,62 @@
+steps to bring up the cluster
+1.  flashed each microsd card with raspbian-jessi-lite.zip using etcher
+    * https://etcher.io/
+    * https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip
+    *** after etcher finishes re-insert and run 
+        touch /Volumes/boot/ssh 
+        this enables ssh to start on boot (dumb this step is needed :/)
+    # improvement, look at using hypriot flash tool with jessie-lite to set hostname when imaging
+
+2. ssh pi@raspberrypi.local
+   default password: raspberry
+   default user: pi
+
+3. first ran was hostname-network.sh passing hostname, ip, dns as args
+  * see hostname-network.sh in this directory (it can be improved)
+  * ./hostname-network kube-master 192.168.1.100 192.168.1.1
+  *** Note the above script assumed /24 (this can be improved)
+  # possible improvements would be to call raspi-config nonint
+  # https://www.raspberrypi.org/forums/viewtopic.php?t=21632
+
+4. next script to run is docker.sh
+  * this iwll  install docker with curl | bash :/  
+  * need to see about potentially verion pinning as tutorials constantly break as updates go out
+  # improvement define version in ansible vars
+
+5. next script to run is kill-swap.sh
+  * this script shot murk all swap and persist through reboot
+
+6. next script is cgroup.sh 
+  * this script will enable cgroup options on boot via /boot/cmdline.txt
+
+7.  run the kube-install.sh script
+  * this script adds apt-keys to the system and sets up kubernetes deb source
+  * kubeadm is installed via apt-get
+  # ansible improvement will be to have a handler notify reboot upon completion here with a wait_for potentially
+
+8.  add the following to a file named kubeadm_conf.yaml
+
+      apiVersion: kubeadm.k8s.io/v1alpha1
+      kind: MasterConfiguration
+      controllerManagerExtraArgs:
+        pod-eviction-timeout: 10s
+        node-monitor-grace-period: 10s 
+
+9.  run kube-init-command.sh on the master
+   * it just does the following command as root
+     kubeadm init --config ./kubeadm_conf.yaml 
+   # This will need to be redirected to a file for ansible to parse
+   # this will allow me to steal the join command string and apply to nodes
+   # this is also where the pi user env is configured (perhaps ansible template)
+
+10. finally we install weave network driver
+   * call script weave-install.sh 
+   * it does a kubecty apply -f https://git.io/weave-kube-1.6
+   # need to pull this down potentially and host here
+   # need to check out the alternative net driver flannel
+        $ curl -sSL https://rawgit.com/coreos/flannel/v0.7.1/Documentation/kube-flannel-rbac.yml | kubectl create -f -
+        $ curl -sSL https://rawgit.com/coreos/flannel/v0.7.1/Documentation/kube-flannel.yml | sed "s/amd64/arm/g" | kubectl create -f -
+
+11.  run kubectl get nodes and verify they show in the ready state
+
+

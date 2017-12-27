@@ -1,0 +1,20 @@
+
+The following are links that were useful in putting together a running kubernetes cluster on some raspberry pi 2's
+
+https://blog.hypriot.com/post/setup-kubernetes-raspberry-pi-cluster/
+
+https://kubecloud.io/setup-a-kubernetes-1-9-0-raspberry-pi-cluster-on-raspbian-using-kubeadm-f8b3b85bc2d1
+
+https://gist.github.com/alexellis/fdbc90de7691a1b9edb545c17da2d975
+
+https://rawgit.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard-arm.yaml
+
+https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/
+
+https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+https://www.raspberrypi.org/forums/viewtopic.php?t=21632
+
+https://gist.githubusercontent.com/kaspernissen/7c412b12eb0084aa96af37241e5d53b4/raw/3e468f33c9524009e7ed6264241ee95703a8c2a1/init.sh
+
+https://gist.githubusercontent.com/kaspernissen/473806621f76c81abd07cd801b686cfa/raw/587ace56283cff914237dec0a47f31132bec2fab/hostname_and_ip.sh
